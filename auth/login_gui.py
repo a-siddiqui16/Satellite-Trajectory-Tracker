@@ -49,7 +49,111 @@ def check_password(password):
     
     return True, "Password is valid"
 
-password = input()
 
-print(check_password(password))
+def validate_login():
 
+    username = username_entry.get()
+    password = password_entry.get()
+
+    if not username or not password:
+        messagebox.showerror("Error", "Please enter both username and password")
+
+        conn = sqlite3.connect("satellite_database.db")
+        c = conn.cursor()
+        c.execute("SELECT password_hash FROM Users WHERE username = ?",
+                   (username,))
+        
+        result = c.fetchone()
+        conn.close()
+
+        if result:
+            stored_hash = result[0]
+            if verify_password(password, stored_hash):
+                messagebox.showinfo("Login Succesful")
+            else:
+                messagebox.showerror("Error", "Invalid Password")
+
+        else:
+            messagebox.showerror("Error", "User not found")
+
+def register_user():
+
+    username = username_entry.get()
+    password = password_entry.get()
+
+    if not username or not password:
+        messagebox.showerror("Error", "Please enter both username and password")
+
+    is_valid, error_msg = check_password(password)
+
+    if is_valid == False:
+        messagebox.showerror("Invalid password", error_msg)
+
+
+    hashed_password = hash_password(password)
+    conn = sqlite3.connect('satellite_database.db')
+    c = conn.cursor()
+
+    try:
+
+        c.execute("INSERT INTO Users (username, password_hash) VALUES (?, ?)", 
+                  (username, hashed_password))
+        
+        conn.commit()
+        messagebox.showinfo("Success", "User registered successfully!")
+
+    except sqlite3.IntegrityError:
+        messagebox.showerror("Error", "Username already exists.")
+
+    
+    finally:
+        conn.close()    
+
+
+
+
+window = tk.Tk()
+window.title("Login form")
+window.geometry('340x440')
+window.configure(bg='#333333')
+
+frame = tk.Frame(bg='#333333')
+
+title_label = tk.Label(
+    frame, text="Login", bg='#333333', fg="#1373CC", font=("Arial", 30)
+)
+
+username_label = tk.Label(
+    frame, text="Username", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
+)
+
+username_entry = tk.Entry(frame, font=("Arial", 16))
+
+password_label = tk.Label(
+    frame, text="Password", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
+)
+
+password_entry = tk.Entry(frame, show="*", font=("Arial", 16))
+
+login_button = tk.Button(
+    frame, text="Login", command=validate_login, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
+)
+
+register_button = tk.Button(
+    frame, text="Register", command=register_user, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
+)
+
+title_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
+
+username_label.grid(row=1, column=0, padx=20, pady=20)
+username_entry.grid(row=1, column=1, padx=20, pady=20)
+
+password_label.grid(row=2, column=0, padx=20, pady=20)
+password_entry.grid(row=2, column=1, padx=20, pady=20)
+
+login_button.grid(row=3, column=0, padx=10, pady=30, sticky="ew")
+register_button.grid(row=3, column=1, padx=10, pady=30)
+
+frame.pack(padx=30, pady=30)
+
+window.mainloop()
