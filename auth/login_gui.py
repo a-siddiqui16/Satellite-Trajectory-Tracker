@@ -7,11 +7,12 @@ from password_hash import hash_password, verify_password
 import sys
 import os
 
-# Handle imports whether running as script or module
+#AI GENERATED
+#Handle imports whether running as script or module
 try:
     from .password_hash import hash_password, verify_password
 except ImportError:
-    # If relative import fails, try absolute import
+    #If relative import fails, try absolute import
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from auth.password_hash import hash_password, verify_password
 
