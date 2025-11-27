@@ -36,16 +36,6 @@ c.execute("""CREATE TABLE IF NOT EXISTS TLE_Data (
     )""")
 
 
-c.execute("""CREATE TABLE IF NOT EXISTS Positional_Data (
-        position_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        norad_id INTEGER NOT NULL,
-        latitude REAL NOT NULL,
-        longitude REAL NOT NULL,
-        altitude REAL NOT NULL,
-        velocity REAL NOT NULL,
-        timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (norad_id) REFERENCES Satellites(norad_id)
-    )""")
 
 
 c.execute("""CREATE TABLE IF NOT EXISTS User_Favourites (
