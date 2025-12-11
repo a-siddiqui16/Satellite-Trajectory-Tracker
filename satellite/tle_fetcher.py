@@ -22,4 +22,3 @@ def fetch_satellite_tle(norad_id):
         print(response.status_code)
 
 
-print(fetch_satellite_tle(norad_id=25544))
