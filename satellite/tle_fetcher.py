@@ -1,29 +1,44 @@
 import requests
+import time
 
 def fetch_satellite_tle(norad_id):
 
     #Built URL that fetches TLE data for any satellite
     url = f"https://celestrak.org/NORAD/elements/gp.php?CATNR={norad_id}&FORMAT=tle"
 
-    response = requests.get(url)
 
-    if response.status_code == 200:
+    try: 
+        response = requests.get(url, timeout=10)
 
-        data = response.text
-        lines = data.split('\n')
+        if response.status_code == 200:
+            data = response.text.strip()
 
-        satellite_name = lines[0].strip()
-        tle_line1 = lines[1].strip()
-        tle_line2 = lines[2].strip()
+            if not data:
+                print("TLE Data not found")
+                return None
 
-        return norad_id, satellite_name, tle_line1, tle_line2
-   
-    else:
-        print(response.status_code)
+            lines = data.split('\n')
+
+            if len(lines) < 3:
+                print("Invalid TLE data format")
+                return None
+
+            satellite_name = lines[0].strip()
+            tle_line1 = lines[1].strip()
+            tle_line2 = lines[2].strip()
+
+            return norad_id, satellite_name, tle_line1, tle_line2
+    
+        else:
+            print(response.status_code)
+            return None
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Network error: {e}")
+        return None
+    
 
 
-<<<<<<< HEAD
-=======
 
 #Line 1: 1 25544U 98067A   22001.74462497  .00001435  00000-0  34779-4 0  9992
 #Line 2: 2 25544  51.6464  24.2704 0004064  69.5467 290.6355 15.48835264296862
@@ -58,10 +73,11 @@ def tle_parser(tle_line1, tle_line2):
 
     }
 
-norad_id = norad_id, name, line1, line2 = fetch_satellite_tle(25544)
+norad_id = norad_id, name, line1, line2 = fetch_satellite_tle(18465)
 
 parameters = tle_parser(line1, line2)
 
 for key, value in parameters.items():
     print(key, value)
->>>>>>> 0d4b13e3997533adcf8755b8082b417c46b444a3
+
+

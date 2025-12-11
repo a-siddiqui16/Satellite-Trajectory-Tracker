@@ -46,6 +46,6 @@ def classify_orbit(sat):
 #Pass the full satellite object and retrieve the orbit type
 orbit_type = classify_orbit(satellite)
 
-print("Test")
+print()
 
 
