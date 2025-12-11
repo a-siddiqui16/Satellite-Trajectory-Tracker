@@ -17,6 +17,9 @@ except ImportError:
     from auth.password_hash import hash_password, verify_password
 
 
+db_path = "satellite_database.db"
+
+
 #Function for password validation based on my SMART objectives
 def check_password(password):
 
@@ -57,24 +60,28 @@ def validate_login():
 
     if not username or not password:
         messagebox.showerror("Error", "Please enter both username and password")
+        return
 
-        conn = sqlite3.connect("satellite_database.db")
-        c = conn.cursor()
-        c.execute("SELECT password_hash FROM Users WHERE username = ?",
-                   (username,))
-        
-        result = c.fetchone()
-        conn.close()
+    try:
+        with sqlite3.connect(db_path) as conn:
 
-        if result:
-            stored_hash = result[0]
-            if verify_password(password, stored_hash):
-                messagebox.showinfo("Login Succesful")
+            c = conn.cursor()
+            c.execute("SELECT password_hash FROM Users WHERE username = ?", (username,))
+            result = c.fetchone()
+
+            if result:
+                stored_hash = result[0]
+                if verify_password(password, stored_hash):
+                    messagebox.showinfo("Login Succesful")
+                else:
+                    messagebox.showerror("Error", "Invalid Password")
+
             else:
-                messagebox.showerror("Error", "Invalid Password")
+                messagebox.showerror("Error", "User not found")
 
-        else:
-            messagebox.showerror("Error", "User not found")
+
+    except sqlite3.Error as e:
+        messagebox.showerror("Database Error", f"An error occurred: {e}")
 
 def register_user():
 
@@ -83,32 +90,30 @@ def register_user():
 
     if not username or not password:
         messagebox.showerror("Error", "Please enter both username and password")
-
+        return
+    
     is_valid, error_msg = check_password(password)
 
-    if is_valid == False:
+    if not is_valid:
+        error_text = "Password must have:\n" + "\n".join(f"• {error}" for error in error_msg) #Used AI for this
         messagebox.showerror("Invalid password", error_msg)
-
+        return
 
     hashed_password = hash_password(password)
-    conn = sqlite3.connect('satellite_database.db')
-    c = conn.cursor()
 
     try:
-
-        c.execute("INSERT INTO Users (username, password_hash) VALUES (?, ?)", 
-                  (username, hashed_password))
-        
-        conn.commit()
-        messagebox.showinfo("Success", "User registered successfully!")
+        with sqlite3.connect(db_path) as conn:
+            c = conn.cursor()
+            c.execute("INSERT INTO Users (username, password_hash) VALUES (?, ?)", 
+                    (username, hashed_password))
+            
+            conn.commit()
+            messagebox.showinfo("Success", "User registered successfully!")
 
     except sqlite3.IntegrityError:
         messagebox.showerror("Error", "Username already exists.")
-
-    
-    finally:
-        conn.close()    
-
+    except sqlite3.Error as e:
+        messagebox.showerror("Database Error", f"An error occurred: {e}")
 
 
 
