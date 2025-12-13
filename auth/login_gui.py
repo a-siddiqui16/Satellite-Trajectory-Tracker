@@ -6,6 +6,7 @@ from string import punctuation
 from password_hash import hash_password, verify_password
 import sys
 import os
+import subprocess
 
 #AI GENERATED
 #Handle imports whether running as script or module
@@ -116,49 +117,49 @@ def register_user():
         messagebox.showerror("Database Error", f"An error occurred: {e}")
 
 
+if __name__ == "__main__":
+    window = tk.Tk()
+    window.title("Login form")
+    window.geometry('340x440')
+    window.configure(bg='#333333')
 
-window = tk.Tk()
-window.title("Login form")
-window.geometry('340x440')
-window.configure(bg='#333333')
+    frame = tk.Frame(bg='#333333')
 
-frame = tk.Frame(bg='#333333')
+    title_label = tk.Label(
+        frame, text="Login", bg='#333333', fg="#1373CC", font=("Arial", 30)
+    )
 
-title_label = tk.Label(
-    frame, text="Login", bg='#333333', fg="#1373CC", font=("Arial", 30)
-)
+    username_label = tk.Label(
+        frame, text="Username", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
+    )
 
-username_label = tk.Label(
-    frame, text="Username", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
-)
+    username_entry = tk.Entry(frame, font=("Arial", 16))
 
-username_entry = tk.Entry(frame, font=("Arial", 16))
+    password_label = tk.Label(
+        frame, text="Password", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
+    )
 
-password_label = tk.Label(
-    frame, text="Password", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
-)
+    password_entry = tk.Entry(frame, show="*", font=("Arial", 16))
 
-password_entry = tk.Entry(frame, show="*", font=("Arial", 16))
+    login_button = tk.Button(
+        frame, text="Login", command=validate_login, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
+    )
 
-login_button = tk.Button(
-    frame, text="Login", command=validate_login, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
-)
+    register_button = tk.Button(
+        frame, text="Register", command=register_user, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
+    )
 
-register_button = tk.Button(
-    frame, text="Register", command=register_user, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
-)
+    title_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
 
-title_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
+    username_label.grid(row=1, column=0, padx=20, pady=20)
+    username_entry.grid(row=1, column=1, padx=20, pady=20)
 
-username_label.grid(row=1, column=0, padx=20, pady=20)
-username_entry.grid(row=1, column=1, padx=20, pady=20)
+    password_label.grid(row=2, column=0, padx=20, pady=20)
+    password_entry.grid(row=2, column=1, padx=20, pady=20)
 
-password_label.grid(row=2, column=0, padx=20, pady=20)
-password_entry.grid(row=2, column=1, padx=20, pady=20)
+    login_button.grid(row=3, column=0, padx=10, pady=30, sticky="ew")
+    register_button.grid(row=3, column=1, padx=10, pady=30)
 
-login_button.grid(row=3, column=0, padx=10, pady=30, sticky="ew")
-register_button.grid(row=3, column=1, padx=10, pady=30)
+    frame.pack(padx=30, pady=30)
 
-frame.pack(padx=30, pady=30)
-
-window.mainloop()
+    window.mainloop()
