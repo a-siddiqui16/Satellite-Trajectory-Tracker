@@ -12,13 +12,71 @@ earth_radius_km = 6378
 satellite_size = 50
 trail_size = 10
 
+
+def calculate_speed(velocity):
+    return (velocity[0]**2 + velocity[1]**2 + velocity[2]**2) ** 0.5
+
+
+
+def store_satellite_data(norad_id):
+
+    satellite_data = fetch_satellite_tle(norad_id)
+    if not satellite_data:
+        print("Could not fetch satellite data")
+        return False
+    
+    norad_id, satellite_name, tle_line1, tle_line2 = satellite_data
+    satellite = EarthSatellite(tle_line1, tle_line2, satellite_name, ts)
+    orbit_type, altitude, inclination = classify_orbit(satellite)
+
+    
+
+    #Extracting values so I can put them in the database
+    data_parameters = tle_parser(tle_line1, tle_line2)
+    eccentricity = float("0." + data_parameters['eccentricity'])
+    mean_motion = float(data_parameters['mean_motion'])
+    epoch_day = data_parameters['epoch_day']
+    epoch_year = data_parameters['epoch_year']
+
+    if int(epoch_year) < 57: #No satellites exist before 1957
+        full_year = 2000 + int(epoch_year)   #Example # 00-56 → 2000-2056
+    else:
+        full_year = 1900 + int(epoch_year)   #Example 57-99 → 1957-1999
+    
+    epoch_date = f"{full_year}-{epoch_day}"
+
+
+    try:
+        with sqlite3.connect(db_path) as conn:
+
+            c = conn.cursor()
+
+            c.execute("""INSERT OR IGNORE INTO Satellites
+                    (norad_id, satellite_name, satellite_type)
+                    VALUES (?, ?, ?)""",
+                    (norad_id, satellite_name, None))
+            
+            c.execute("""INSERT INTO TLE_Data 
+                        (norad_id, tle_line1, tle_line2, orbit_type, 
+                        inclination, eccentricity, mean_motion, epoch_date)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (norad_id, tle_line1, tle_line2, orbit_type,
+                    inclination, eccentricity, mean_motion, epoch_date))
+            
+            conn.commit()
+
+        return True
+    
+    except sqlite3.Error as e:
+        print("Error")
+        return False
+
+
 ts = load.timescale()
 norad_id = int(input("ENTER NORAD ID: "))
 satellite_data = fetch_satellite_tle(norad_id)
 
-
-def calculate_speed(velocity):
-    return (velocity[0]**2 + velocity[1]**2 + velocity[2]**2) ** 0.5
+store_satellite_data(norad_id)
 
 if satellite_data:
 
@@ -41,7 +99,6 @@ if satellite_data:
     
     while True:
         rate(60)
-
 
         t = ts.now()
 
@@ -77,48 +134,6 @@ else:
 
 
 
-def store_satellite_data(norad_id):
-
-    satellite_data = fetch_satellite_tle(norad_id)
-    if not satellite_data:
-        print("Could not fetch satellite data")
-        return False
-    
-    norad_id, satellite_name, tle_line1, tle_line2 = satellite_data
-    satellite = EarthSatellite(tle_line1, tle_line2, satellite_name, ts)
-    orbit_type, altitude, inclination = classify_orbit(satellite)
 
     
 
-    #Extracting values so I can put them in the database
-    data_parameters = tle_parser(tle_line1, tle_line2)
-    eccentricity = float(data_parameters['eccentricity'])
-    mean_motion = float(data_parameters['mean motion'])
-    epoch_date = data_parameters['epoch_day']
-
-    try:
-        with sqlite3.connect(db_path) as conn:
-
-            c = conn.cursor()
-
-            c.execute("""INSERT INTO Satellites
-                    (norad_id, satellite_name, satellite_type)
-                    VALUES (?, ?, ?)""",
-                    (norad_id, satellite_name, None))
-            
-            c.execute("""INSERT INTO TLE_Data 
-                        (norad_id, tle_line1, tle_line2, orbit_type, 
-                        inclination, eccentricity, mean_motion, epoch_date)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                    (norad_id, tle_line1, tle_line2, orbit_type,
-                    inclination, eccentricity, mean_motion, epoch_date))
-            
-            conn.commit()
-            return True
-    
-    except sqlite3.Error as e:
-        print("Error")
-        return False
-    
-
-store_satellite_data(norad_id)
