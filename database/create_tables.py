@@ -13,7 +13,6 @@ c.execute("""CREATE TABLE IF NOT EXISTS Users (
     )""")
 
 
-
 c.execute("""CREATE TABLE IF NOT EXISTS Satellites (
         norad_id INTEGER PRIMARY KEY,
         satellite_name TEXT NOT NULL,
@@ -34,8 +33,6 @@ c.execute("""CREATE TABLE IF NOT EXISTS TLE_Data (
         retrieved_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (norad_id) REFERENCES Satellites(norad_id)
     )""")
-
-
 
 
 c.execute("""CREATE TABLE IF NOT EXISTS User_Favourites (

@@ -1,16 +1,18 @@
+import sqlite3
 from vpython import *
 from skyfield.api import EarthSatellite, load, wgs84
-from tle_fetcher import fetch_satellite_tle
+from tle_fetcher import fetch_satellite_tle, tle_parser
 from orbital_calculations import classify_orbit
+from datetime import datetime
+
+
+db_path = "satellite_database.db"
 
 earth_radius_km = 6378
 satellite_size = 50
 trail_size = 10
 
-
 ts = load.timescale()
-
-
 norad_id = int(input("ENTER NORAD ID: "))
 satellite_data = fetch_satellite_tle(norad_id)
 
@@ -27,7 +29,7 @@ if satellite_data:
 
     scene = canvas(width=900, height=700, background=color.black)
     scene.title = "Satellite Trajectory Tracker"
-    scene.append_to_caption("satellite Info\n")
+    scene.append_to_caption("Satellite Info\n")
     info_box = wtext(text="Current satellite data\n")
 
 
@@ -70,9 +72,53 @@ if satellite_data:
         info_label.text = f"{satellite_name}"
         
 
-
 else:
     print("Falied to retrieve data")
 
 
 
+def store_satellite_data(norad_id):
+
+    satellite_data = fetch_satellite_tle(norad_id)
+    if not satellite_data:
+        print("Could not fetch satellite data")
+        return False
+    
+    norad_id, satellite_name, tle_line1, tle_line2 = satellite_data
+    satellite = EarthSatellite(tle_line1, tle_line2, satellite_name, ts)
+    orbit_type, altitude, inclination = classify_orbit(satellite)
+
+    
+
+    #Extracting values so I can put them in the database
+    data_parameters = tle_parser(tle_line1, tle_line2)
+    eccentricity = float(data_parameters['eccentricity'])
+    mean_motion = float(data_parameters['mean motion'])
+    epoch_date = data_parameters['epoch_day']
+
+    try:
+        with sqlite3.connect(db_path) as conn:
+
+            c = conn.cursor()
+
+            c.execute("""INSERT INTO Satellites
+                    (norad_id, satellite_name, satellite_type)
+                    VALUES (?, ?, ?)""",
+                    (norad_id, satellite_name, None))
+            
+            c.execute("""INSERT INTO TLE_Data 
+                        (norad_id, tle_line1, tle_line2, orbit_type, 
+                        inclination, eccentricity, mean_motion, epoch_date)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (norad_id, tle_line1, tle_line2, orbit_type,
+                    inclination, eccentricity, mean_motion, epoch_date))
+            
+            conn.commit()
+            return True
+    
+    except sqlite3.Error as e:
+        print("Error")
+        return False
+    
+
+store_satellite_data(norad_id)
