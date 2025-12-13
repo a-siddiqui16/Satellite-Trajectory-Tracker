@@ -73,11 +73,4 @@ def tle_parser(tle_line1, tle_line2):
 
     }
 
-norad_id = norad_id, name, line1, line2 = fetch_satellite_tle(18465)
-
-parameters = tle_parser(line1, line2)
-
-for key, value in parameters.items():
-    print(key, value)
-
 

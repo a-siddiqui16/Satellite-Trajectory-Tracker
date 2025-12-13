@@ -2,28 +2,26 @@ from skyfield.api import EarthSatellite, load
 from tle_fetcher import fetch_satellite_tle
 import math
 
+#Constants
+
+earth_radius_km = 6378
+earth_mu = 398600.4418
+geo_altitude = 35786
+pi = math.pi
+
+
 ts = load.timescale()
-
-satellite_id = input("Enter NORAD ID: ")
-satellite_info = fetch_satellite_tle(satellite_id)
-
-satellite_name = satellite_info[name]
-line1 = satellite_info[line1]
-line2 = satellite_info[line2]
-
-#Create satellite object
-satellite = EarthSatellite(line1, line2, satellite_name, ts)
 
 def classify_orbit(sat):
 
     #Orbital parameters
-    i = sat.model.inclo * 180 / 3.14159  #inclination (degrees)
-    n = sat.model.no_kozai * 60 * 24 / (2 * math.pi)  #rev/day
+    i = sat.model.inclo * 180 / pi  #inclination (degrees)
+    n = sat.model.no_kozai * 60 * 24 / (2 * pi)  #rev/day
 
     mu = 398600.4418  #Earth's gravitational parameter
 
-    a = (mu ** (1 / 3)) / ((2 * 3.14159 * n / 86400) ** (2 / 3))  #semi-major axis (km)
-    h = a - 6371  #approximate altitude (km)
+    a = (mu ** (1 / 3)) / ((2 * pi * n / 86400) ** (2 / 3))  #semi-major axis (km)
+    h = a - earth_radius_km  #approximate altitude (km)
 
     #Orbit type classification
     if h < 2000:
@@ -43,9 +41,28 @@ def classify_orbit(sat):
 
     return orbit, h, i
 
-#Pass the full satellite object and retrieve the orbit type
-orbit_type = classify_orbit(satellite)
 
-print()
+def get_satellite_info(norad_id):
+
+    satellite_data = fetch_satellite_tle(norad_id) 
+
+    if not satellite_data:
+        print("Failed to retrieve satellite data")
+        return None
+    
+    satellite = EarthSatellite(line1, line2, satellite_name, ts)
+    returned_norad_id, satellite_name, line1, line2 = satellite_data
+    orbit_type, altitude, inclination = classify_orbit(satellite)
+
+    return {
+        'norad_id': returned_norad_id,
+        'satellite_name': satellite_name,
+        'tle_line1': line1,
+        'tle_line2': line2,
+        'satellite_object': satellite,
+        'orbit_type': orbit_type,
+        'altitude_km': altitude,
+        'inclination_deg': inclination
+    }
 
 
