@@ -7,9 +7,9 @@ ts = load.timescale()
 satellite_id = input("Enter NORAD ID: ")
 satellite_info = fetch_satellite_tle(satellite_id)
 
-satellite_name = satellite_info['satellite_name']
-line1 = satellite_info['tle_line1']
-line2 = satellite_info['tle_line2']
+satellite_name = satellite_info[name]
+line1 = satellite_info[line1]
+line2 = satellite_info[line2]
 
 #Create satellite object
 satellite = EarthSatellite(line1, line2, satellite_name, ts)

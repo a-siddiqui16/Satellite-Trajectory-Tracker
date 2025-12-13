@@ -1,7 +1,7 @@
 from vpython import *
 from skyfield.api import EarthSatellite, load, wgs84
 from tle_fetcher import fetch_satellite_tle
-from orbital_calculations import orbit_type
+from orbital_calculations import get_satellite_info
 
 
 ts = load.timescale()
@@ -48,7 +48,7 @@ if satellite_data:
         info_text += f"Longitude: {lon:.2f}°\n"
         info_text += f"Altitude: {height:.2f}\n"
         info_text += f"Velocity: {speed:.2f}\n"
-        info_test += f"Orbit Type: {orbit_type}\n"
+        info_test += f"Orbit Type: {get_satellite_info(satellite_data)}\n"
         info_box.text = info_text
         info_label.text = f"{satellite_name}"
 
