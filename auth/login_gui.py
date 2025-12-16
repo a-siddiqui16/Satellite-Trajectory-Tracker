@@ -3,11 +3,10 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 from string import punctuation
-from auth.password_hash import sha256, check_password
+from password_hash import sha256, verify_password
 
 
 db_path = "satellite_database.db"
-
 
 #Function for password validation based on my SMART objectives
 def check_password(password):
@@ -60,7 +59,7 @@ def validate_login():
 
             if result:
                 stored_hash = result[0]
-                if check_password(password, stored_hash):
+                if verify_password(password, stored_hash):
                     messagebox.showinfo("Login Succesful")
                 else:
                     messagebox.showerror("Error", "Invalid Password")
@@ -81,14 +80,14 @@ def register_user():
         messagebox.showerror("Error", "Please enter both username and password")
         return
     
-    is_valid, error_msg = check_password(password)
+    is_valid, error_msg = verify_password(password)
 
     if not is_valid:
         error_text = "Password must have:\n" + "\n".join(f"• {error}" for error in error_msg) #Used AI for this
         messagebox.showerror("Invalid password", error_msg)
         return
 
-    hashed_password = sha256(password)
+    hashed_password = sha256(password).hex()
 
     try:
         with sqlite3.connect(db_path) as conn:
