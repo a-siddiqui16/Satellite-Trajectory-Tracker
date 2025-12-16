@@ -3,7 +3,7 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 from string import punctuation
-from password_hash import hash_password, verify_password
+from auth.password_hash import sha256, check_password
 
 
 db_path = "satellite_database.db"
@@ -60,7 +60,7 @@ def validate_login():
 
             if result:
                 stored_hash = result[0]
-                if verify_password(password, stored_hash):
+                if check_password(password, stored_hash):
                     messagebox.showinfo("Login Succesful")
                 else:
                     messagebox.showerror("Error", "Invalid Password")
@@ -88,7 +88,7 @@ def register_user():
         messagebox.showerror("Invalid password", error_msg)
         return
 
-    hashed_password = hash_password(password)
+    hashed_password = sha256(password)
 
     try:
         with sqlite3.connect(db_path) as conn:
