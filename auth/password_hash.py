@@ -117,7 +117,7 @@ def sha256(message):
 
         #Combine final hash values into a 256-bit result
 
-        return (
+    return (
         h0.to_bytes(4, "big") +
         h1.to_bytes(4, "big") +
         h2.to_bytes(4, "big") +
@@ -130,6 +130,7 @@ def sha256(message):
 
 #Helpers
 
+#Rotates a 32-bit ine
 def _rotate_right(value, shift, size=32):
     return ((value >> shift) | (value << (size - shift))) & 0xFFFFFFFF
 
@@ -157,5 +158,16 @@ def _ch(x, y, z):
 def _maj(x, y, z):
     return (x & y) ^ (x & z) ^ (y & z)
 
-if __name__ == "__main__":
-    print(sha256("Hello").hex())
+
+
+#Checks if the users input measures the hash
+
+def verify_password(password, stored_hash):
+    password_hash = sha256(password)
+
+    if isinstance(stored_hash, str):
+        stored_hash_bytes = bytes.fromhex(stored_hash)
+    else:
+        stored_hash_bytes = stored_hash
+
+    return password_hash == stored_hash_bytes
