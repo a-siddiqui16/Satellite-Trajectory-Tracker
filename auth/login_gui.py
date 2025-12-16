@@ -80,7 +80,7 @@ def register_user():
         messagebox.showerror("Error", "Please enter both username and password")
         return
     
-    is_valid, error_msg = verify_password(password)
+    is_valid, error_msg = check_password(password)
 
     if not is_valid:
         error_text = "Password must have:\n" + "\n".join(f"• {error}" for error in error_msg) #Used AI for this
