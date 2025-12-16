@@ -66,3 +66,16 @@ def get_satellite_info(norad_id):
     }
 
 
+def solve_kepler(M, e):
+    pass
+
+def eccentric_to_true_anomaly(E, e):
+    pass
+
+def get_orbital_position(nu, a, e):
+    pass
+
+def orbital_to_eci(x, y, raan, inclination, arg_perigee):
+    pass
+
+
