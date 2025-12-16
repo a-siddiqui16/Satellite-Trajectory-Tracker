@@ -4,18 +4,6 @@ import tkinter as tk
 from tkinter import messagebox
 from string import punctuation
 from password_hash import hash_password, verify_password
-import sys
-import os
-import subprocess
-
-#AI GENERATED
-#Handle imports whether running as script or module
-try:
-    from .password_hash import hash_password, verify_password
-except ImportError:
-    #If relative import fails, try absolute import
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from auth.password_hash import hash_password, verify_password
 
 
 db_path = "satellite_database.db"
@@ -118,6 +106,7 @@ def register_user():
 
 
 if __name__ == "__main__":
+    
     window = tk.Tk()
     window.title("Login form")
     window.geometry('340x440')
