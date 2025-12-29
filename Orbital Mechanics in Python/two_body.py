@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import ode #takes a differential equation
+from matplotlib import image
 plt.style.use('dark_background')
 
 
@@ -15,7 +16,6 @@ def plot(r):
     fig = plt.figure(figsize=(10,10))
     ax = fig.add_subplot(111,projection='3d')
     
-
     # plot trajectory and starting point
     ax.plot(r[:,0], r[:,1], r[:,2], 'k-')
     ax.plot([r[0,0]], [r[0,1]], [r[0,2]],'ko')
@@ -28,7 +28,8 @@ def plot(r):
     x = earth_radius * np.outer(np.cos(u), np.sin(v))
     y = earth_radius * np.outer(np.sin(u), np.sin(v))
     z = earth_radius * np.outer(np.ones(np.size(u)), np.cos(v))
-    ax.plot_surface(x, y, z, cmap='Blues', alpha=0.6)
+    ax.plot_wireframe(x, y, z, color = "k", linewidth = 0.25)
+
 
     #check for custom axes limits
     max_val = np.max(np.abs(r))
@@ -43,6 +44,31 @@ def plot(r):
     ax.set_title('Trajectory . Starting Position')
     plt.legend(['Trajectory','Starting Position'])
     plt.show()
+
+
+# def plot_earth(ax, radius=6371):
+#     # Load Earth texture
+#     img = image.imread('earth_textures.jpg') 
+    
+#     #generate sphere coordinates
+#     u = np.linspace(0, 2 * np.pi, img.shape[1])
+#     v = np.linspace(-np.pi/2, np.pi/2, img.shape[0])
+
+#     u, v = np.meshgrid(u, v)
+
+#     x = radius * np.cos(v) * np.cos(u)
+#     y = radius * np.cos(v) * np.sin(u)
+#     z = radius * np.sin(v)
+
+#     # map texture
+#     ax.plot_surface(
+#         x, y, z,
+#         rstride=1,
+#         cstride=1,
+#         facecolors=img/255,
+#         linewidth=0,
+#         antialiased=False
+#     )
 
 
 
