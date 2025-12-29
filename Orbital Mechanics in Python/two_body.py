@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import ode #takes a differential equation
+plt.style.use('dark_background')
+
 
 #Constants
 earth_radius = 6378.0 #km
@@ -9,9 +11,10 @@ earth_mu = 398600.0 #earths graviational parameter #km^3 / s^2
 
 def plot(r):
 
-    #3D plot
+    #3D plot screen to be represented to the user
     fig = plt.figure(figsize=(10,10))
     ax = fig.add_subplot(111,projection='3d')
+    
 
     # plot trajectory and starting point
     ax.plot(r[:,0], r[:,1], r[:,2], 'k-')
