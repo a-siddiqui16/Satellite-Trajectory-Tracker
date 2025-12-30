@@ -16,7 +16,7 @@ def plot(r):
     fig = plt.figure(figsize=(10,10))
     ax = fig.add_subplot(111,projection='3d')
     
-    # plot trajectory and starting point
+    #plot trajectory and starting point
     ax.plot(r[:,0], r[:,1], r[:,2], 'k-')
     ax.plot([r[0,0]], [r[0,1]], [r[0,2]],'ko')
 

@@ -16,5 +16,5 @@ earth = {
     "name":"Earth",
     "mass": 5.972e24,
     "mu": 5.972e24*G,
-    "radius": 695700.0
+    "radius": 6378.0
 }
