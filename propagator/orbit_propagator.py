@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from scipy.integrate import ode
 import planetary_data
 import math
@@ -19,7 +19,7 @@ class OrbitPropagator:
 
     def propagate_orbit(self):
 
-        n_steps = int(np.ceil(self.tspan / self.dt))
+        self.n_steps = int(np.ceil(self.tspan / self.dt))
 
         #initialise variables   
         self.ys = np.zeros((self.n_steps, 6)) #6 states, 60 rows wide by 6 columns
@@ -76,8 +76,8 @@ class OrbitPropagator:
         ax = fig.add_subplot(111,projection='3d')
         
         #plot trajectory and starting point
-        ax.plot(self.r[:,0], self.r[:,1], self.r[:,2], 'k-')
-        ax.plot([self.r[0,0]], [self.r[0,1]], [self.r[0,2]],'ko')
+        ax.plot(self.rs[:,0], self.rs[:,1], self.rs[:,2], 'k-')
+        ax.plot([self.rs[0,0]], [self.rs[0,1]], [self.rs[0,2]],'ko')
 
         #plot earth
         r_plot = self.cb["radius"]

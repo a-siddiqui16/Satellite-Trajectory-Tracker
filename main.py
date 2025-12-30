@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from scipy.integrate import ode
 from propagator.orbit_propagator import OrbitPropagator as OP
 from propagator import planetary_data
