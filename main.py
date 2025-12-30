@@ -1,18 +1,28 @@
-import sys
-import os
-import subprocess
+import numpy as np
+import matplotlib as plt
+from scipy.integrate import ode
+from propagator.orbit_propagator import OrbitPropagator as OP
+from propagator import planetary_data
+plt.style.use('dark_background')
 
-# Add project root to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+cb = planetary_data.earth
 
-# Change to project directory
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+if __name__ == "__main__":
+    r_mag = cb["radius"] + 500.0
+    v_mag = np.sqrt(cb["mu"] / r_mag)
 
-print("Starting Satellite Tracker System...")
-print("Loading login screen...\n")
+    #initial position and velocity vectors
+    r0 = np.array([r_mag, 0, 0])
+    v0 = np.array([0, v_mag, 0])
 
-# Run the login GUI directly as a subprocess
-try:
-    subprocess.run([sys.executable, 'auth/login_gui.py'])
-except Exception as e:
-    print(f"Error: {e}")
+    #timespan
+    tspan = 100 * 60.0
+
+    #timestamp
+    dt = 10.0
+
+    op = OP(r0, v0, tspan, dt)
+    op.propagate_orbit()
+    op.plot_3d(show_plot=True)
+
+
