@@ -58,7 +58,7 @@ class OrbitPropagator:
         self.r = np.array([rx, ry, rz]) #Changes the format to a vector
 
         #norm of radius vector
-        norm_r = np.linalg.norm(self.rs)
+        norm_r = np.linalg.norm(self.r)
 
         #two body acceleration
         ax = -self.cb['mu'] * rx / norm_r**3
