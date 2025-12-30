@@ -34,12 +34,17 @@ def plot(r):
     #check for custom axes limits
     max_val = np.max(np.abs(r))
 
-    #set labels and title
+    #set labels
     max_val = np.max(np.abs(r))
     ax.set_xlim([-max_val, max_val])
     ax.set_ylim([-max_val, max_val])
     ax.set_zlim([-max_val, max_val])
-    ax.set_xlabel('X (km)'); ax.set_ylabel('Y (km)'); ax.set_zlabel('Z (km)')
+
+    #sets titles
+    ax.set_xlabel('X (km)')
+    ax.set_ylabel('Y (km)')
+    ax.set_zlabel('Z (km)')
+
     ax.set_aspect('equal')
     ax.set_title('Trajectory . Starting Position')
     plt.legend(['Trajectory','Starting Position'])
