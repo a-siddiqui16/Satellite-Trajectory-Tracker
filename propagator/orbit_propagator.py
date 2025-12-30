@@ -17,8 +17,6 @@ class OrbitPropagator:
         self.dt = dt
         self.cb = cb
 
-    def propagate_orbit(self):
-
         self.n_steps = int(np.ceil(self.tspan / self.dt))
 
         #initialise variables   
@@ -34,6 +32,9 @@ class OrbitPropagator:
         self.solver = ode(self.diffy_q)
         self.solver.set_integrator('lsoda') #fastest ODE according to the tutorial
         self.solver.set_initial_value(self.y0, 0)
+
+
+    def propagate_orbit(self):
 
         #propagate orbit
 
