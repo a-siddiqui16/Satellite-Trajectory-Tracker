@@ -4,7 +4,7 @@ from scipy.integrate import ode
 from math import sqrt
 from propagator.orbit_propagator import OrbitPropagator as OP
 from propagator import planetary_data
-from propagator.n_orbits import plot_n_orbits
+from propagator import n_orbits
 plt.style.use('dark_background')
 
 cb = planetary_data.earth
@@ -40,6 +40,6 @@ if __name__ == "__main__":
     op0.propagate_orbit()
 
 
-    plot_n_orbits.plot_n_orbits([op,rs, op0,rs], labels=['0', '1'], show_plot=True)
+    n_orbits.plot_n_orbits([op,rs, op0,rs], labels=['0', '1'], show_plot=True)
 
 
