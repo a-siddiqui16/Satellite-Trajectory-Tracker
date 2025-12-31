@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from propagator import planetary_data
 
 d2r = np.pi/100.0
@@ -8,7 +8,7 @@ d2r = np.pi/100.0
 def plot_n_orbits(rs, labels, cb=planetary_data.earth, show_plot=False, save_plot=False, title="Many Orbits"):
 
         #3D plot screen to be represented to the user
-        fig = plt.figure(figsize=(10,10))
+        fig = plt.figure(figsize=(10,100))
         ax = fig.add_subplot(111,projection='3d')
         
         n = 0
