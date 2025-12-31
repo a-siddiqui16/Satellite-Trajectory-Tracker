@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from propagator import planetary_data
+from math import sqrt, atan, tan
 
 d2r = np.pi/100.0
 
@@ -49,3 +50,78 @@ def plot_n_orbits(rs, labels, cb=planetary_data.earth, show_plot=False, save_plo
             plt.show()
         if save_plot:
             plt.savefig(title+'.png', dpi=300)
+
+
+#Algorithm to take classical orbital elements
+
+def coes2rv(coes, deg=False, mu=planetary_data.earth['mu']):
+     
+    if deg:
+        a, e, i, ta, aop, raan = coes
+        i*= d2r
+        ta*= d2r
+        aop*= d2r
+        raan*= d2r
+    else:
+         a, e, i, ta, aop, raan = coes
+
+    E = ecc_anomaly([ta, e], 'tae')
+
+    r_norm = a * (1-e**2)/(1+e * np.cos(ta))
+
+    #calculating r and v vectors in perifocal frame
+    r_perif = r_norm * np.array([m.cos(ta), m.sin(ta), 0])
+    v_perif = m.sqrt(mu * a)/r_norm * np.array([-m.sin(E), m.cos(E) * m.sqrt(1-e**22), 0])
+    
+    #rotation matrix
+    perif2eci = np.transpose(eci2perif(raan, aop, i))
+
+    #calculate r and v vectors in inetertal frame
+    r = np.dot(perif2eci, r_perif)
+    v = np.dot(perif2eci, v_perif)
+
+    return r, v
+
+def eci2perif(raan, aop, i):
+    row0 = [-m.sin(raan)*m.cos(i)*m.sin(aop) + m.cos(raan)*m.cos(aop), m.cos(raan)*m.cos(i)*m.sin(aop) + m.sin(raan)*m.cos(aop), m.sin(i)*m.sin(aop)]
+    row1 = [-m.sin(raan)*m.cos(i)*m.cos(aop) - m.cos(raan)*m.sin(aop),m.cos(raan)*m.cos(i)*m.cos(aop) - m.sin(raan)*m.sin(aop), m.sin(i)*m.cos(aop)]
+    w2 = [m.sin(raan)*m.sin(i), -m.cos(raan)*m.sin(i), m.cos(i)]
+
+    return np.array([row0, row1, row2])
+
+
+def ecc_anomaly(arr, method, tol=1e-8):
+    if method == "newton":
+
+        #Iteratively Finding E via Newton's Method
+        Me, e = arr
+        if Me < np.pi / 2.0: 
+            E0 = Me+e/2.0
+        else:
+            E0 = Me-e
+
+        for n in range(200): #Number of steps
+            ratio = (E0-e * np.sin(E0)-Me) / (1-e*np.cos(E0))
+            if abs(ratio) < tol:
+                if n == 0:
+                    return E0
+                else:
+                    return E1
+            else:
+                E1 = E0-ratio
+                E0 = E1
+
+        return False
+
+    elif method == "tae":
+        ta, e = arr
+        return 2 * m.atan(m.sqrt(1-e) / (1+e)) * m.tan(ta/2.0)
+    
+    else:
+        print("Invalid method")
+
+
+        
+
+
+    

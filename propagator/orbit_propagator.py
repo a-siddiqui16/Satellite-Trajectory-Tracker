@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import ode
 from propagator import planetary_data
+from propagator import n_orbits
 import math
 
 pi = math.pi
@@ -9,12 +10,16 @@ cb = planetary_data.earth
 
 class OrbitPropagator:
 
-    def __init__(self, r0, v0, tspan, dt, cb=planetary_data.earth):
+    def __init__(self, state0, tspan, dt, coes=False, cb=planetary_data.earth):
 
-        self.r0 = r0
-        self.v0 = v0
+        if coes:
+            self.r0, self.v0 =n_orbits.coes2rv(state0, deg=True, mu=cb['mu'])
+        else:
+            self.r0 = state0[:3]
+            self.v0 = state0[3:]
+
         self.tspan = tspan
-        self.dt = dt
+        self.dt = dt 
         self.cb = cb
 
         self.n_steps = int(np.ceil(self.tspan / self.dt))
