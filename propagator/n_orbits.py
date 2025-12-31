@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from propagator import planetary_data
-from math import sqrt, atan, tan
+import math as m
 
 d2r = np.pi/100.0
 
@@ -9,7 +9,7 @@ d2r = np.pi/100.0
 def plot_n_orbits(rs, labels, cb=planetary_data.earth, show_plot=False, save_plot=False, title="Many Orbits"):
 
         #3D plot screen to be represented to the user
-        fig = plt.figure(figsize=(10,100))
+        fig = plt.figure(figsize=(10,10))
         ax = fig.add_subplot(111,projection='3d')
         
         n = 0
@@ -85,7 +85,7 @@ def coes2rv(coes, deg=False, mu=planetary_data.earth['mu']):
 def eci2perif(raan, aop, i):
     row0 = [-m.sin(raan)*m.cos(i)*m.sin(aop) + m.cos(raan)*m.cos(aop), m.cos(raan)*m.cos(i)*m.sin(aop) + m.sin(raan)*m.cos(aop), m.sin(i)*m.sin(aop)]
     row1 = [-m.sin(raan)*m.cos(i)*m.cos(aop) - m.cos(raan)*m.sin(aop),m.cos(raan)*m.cos(i)*m.cos(aop) - m.sin(raan)*m.sin(aop), m.sin(i)*m.cos(aop)]
-    w2 = [m.sin(raan)*m.sin(i), -m.cos(raan)*m.sin(i), m.cos(i)]
+    row2 = [m.sin(raan)*m.sin(i), -m.cos(raan)*m.sin(i), m.cos(i)]
 
     return np.array([row0, row1, row2])
 

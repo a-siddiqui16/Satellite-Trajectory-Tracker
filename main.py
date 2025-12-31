@@ -52,7 +52,7 @@ if __name__ == "__main__":
     c1 = [cb["radius"]+35800, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     op0 = OP(c0, tspan, dt, coes=True)
-    op1 = OP(c0, tspan, dt, coes=True)
+    op1 = OP(c1, tspan, dt, coes=True)
 
     op0.propagate_orbit()
     op1.propagate_orbit()
