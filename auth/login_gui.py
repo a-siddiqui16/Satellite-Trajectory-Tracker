@@ -201,7 +201,7 @@ class LoginWindow:
 
         self.window = tk.Tk()
         self.window.title("Login form")
-        self.window.geometry('340x440')
+        self.window.geometry('1920x1080')
         self.window.configure(bg='#333333')
         self.login_successful = False
         self.username = None
@@ -254,7 +254,7 @@ class LoginWindow:
             return
 
         try:
-            
+
             with sqlite3.connect(db_path) as conn:
                 c = conn.cursor()
                 c.execute("SELECT password_hash FROM Users WHERE username = ?", 

@@ -63,7 +63,7 @@
 import sys
 import os
 
-# Add current directory and subdirectories to path
+#Add current directory and subdirectories to path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)
 sys.path.insert(0, os.path.join(current_dir, 'auth'))
@@ -73,11 +73,11 @@ from auth.login_gui import LoginWindow
 from gui.main_system import MainSystemGUI
 
 if __name__ == "__main__":
-    # Show login window first
+    #Show login window first
     login_window = LoginWindow()
     login_successful, username = login_window.run()
 
-    # If login successful, show main system
+    #If login successful, show main system
     if login_successful:
         main_system = MainSystemGUI(username)
         main_system.run()
