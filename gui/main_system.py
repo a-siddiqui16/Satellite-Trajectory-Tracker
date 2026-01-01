@@ -7,18 +7,18 @@ from skyfield.api import EarthSatellite, load
 import sys
 import os
 
-#Add directories to path (Used AI to fix import issues)
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-skyfield_dir = os.path.join(parent_dir, 'skyfield')
-tle_fetcher_dir = os.path.join(parent_dir, 'tle_fetcher')
-sys.path.insert(0, parent_dir)
-sys.path.insert(0, skyfield_dir)
-sys.path.insert(0, tle_fetcher_dir)
+# #Add directories to path (Used AI to fix import issues)
+# parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# skyfield_dir = os.path.join(parent_dir, 'skyfield')
+# tle_fetcher_dir = os.path.join(parent_dir, 'tle_fetcher')
+# sys.path.insert(0, parent_dir)
+# sys.path.insert(0, skyfield_dir)
+# sys.path.insert(0, tle_fetcher_dir)
 
 
+from skyfield_calculations import tle_fetcher
+from skyfield_calculations import orbital_calculations
 import skyfield
-import tle_fetcher
-import orbital_calculations
 from propagator.orbit_propagator import OrbitPropagator
 from propagator import planetary_data
 plt.style.use('dark_background')
@@ -26,6 +26,7 @@ plt.style.use('dark_background')
 class MainSystemGUI:
 
     def __init__(self, username):
+
         self.username = username
         self.window = tk.Tk()
         self.window.title("Satellite Trajectory Tracker")
