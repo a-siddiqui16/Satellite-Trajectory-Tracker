@@ -1,3 +1,157 @@
+# import re
+# import sqlite3
+# import tkinter as tk
+# from tkinter import messagebox
+# from string import punctuation
+# from password_hash import sha256, verify_password
+
+
+# db_path = "satellite_database.db"
+
+# #Function for password validation based on my SMART objectives
+# def check_password(password):
+
+#     errors = []
+
+#     if len(password) < 8:
+#         errors.append("at least 8 characters long")
+
+#     if not re.search(r'[A-Z]', password):
+#         errors.append("at least one uppercase letter")
+
+#     if not re.search(r'[a-z]', password):
+#         errors.append("at least one lowercase letter")
+
+#     if not re.search(r'[0-9]', password):
+#         errors.append("at least one number")
+
+#     has_special = False
+#     for char in password:
+#         if char in punctuation:
+#             has_special = True
+#             break
+
+#     if not has_special:
+#         errors.append("at least one special character")
+
+#     if errors:
+#         error_message = errors
+#         return False, error_message
+    
+#     return True, "Password is valid"
+
+
+# def validate_login():
+
+#     username = username_entry.get()
+#     password = password_entry.get()
+
+#     if not username or not password:
+#         messagebox.showerror("Error", "Please enter both username and password")
+#         return
+
+#     try:
+#         with sqlite3.connect(db_path) as conn:
+
+#             c = conn.cursor()
+#             c.execute("SELECT password_hash FROM Users WHERE username = ?", (username,))
+#             result = c.fetchone()
+
+#             if result:
+#                 stored_hash = result[0]
+#                 if verify_password(password, stored_hash):
+#                     messagebox.showinfo("Login Succesful")
+#                 else:
+#                     messagebox.showerror("Error", "Invalid Password")
+
+#             else:
+#                 messagebox.showerror("Error", "User not found")
+
+
+#     except sqlite3.Error as e:
+#         messagebox.showerror("Database Error", f"An error occurred: {e}")
+
+# def register_user():
+
+#     username = username_entry.get()
+#     password = password_entry.get()
+
+#     if not username or not password:
+#         messagebox.showerror("Error", "Please enter both username and password")
+#         return
+    
+#     is_valid, error_msg = check_password(password)
+
+#     if not is_valid:
+#         error_text = "Password must have:\n" + "\n".join(f"• {error}" for error in error_msg) #Used AI for this
+#         messagebox.showerror("Invalid password", error_msg)
+#         return
+
+#     hashed_password = sha256(password).hex()
+
+#     try:
+#         with sqlite3.connect(db_path) as conn:
+#             c = conn.cursor()
+#             c.execute("INSERT INTO Users (username, password_hash) VALUES (?, ?)", 
+#                     (username, hashed_password))
+            
+#             conn.commit()
+#             messagebox.showinfo("Success", "User registered successfully!")
+
+#     except sqlite3.IntegrityError:
+#         messagebox.showerror("Error", "Username already exists.")
+#     except sqlite3.Error as e:
+#         messagebox.showerror("Database Error", f"An error occurred: {e}")
+
+
+# if __name__ == "__main__":
+    
+#     window = tk.Tk()
+#     window.title("Login form")
+#     window.geometry('340x440')
+#     window.configure(bg='#333333')
+
+#     frame = tk.Frame(bg='#333333')
+
+#     title_label = tk.Label(
+#         frame, text="Login", bg='#333333', fg="#1373CC", font=("Arial", 30)
+#     )
+
+#     username_label = tk.Label(
+#         frame, text="Username", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
+#     )
+
+#     username_entry = tk.Entry(frame, font=("Arial", 16))
+
+#     password_label = tk.Label(
+#         frame, text="Password", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
+#     )
+
+#     password_entry = tk.Entry(frame, show="*", font=("Arial", 16))
+
+#     login_button = tk.Button(
+#         frame, text="Login", command=validate_login, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
+#     )
+
+#     register_button = tk.Button(
+#         frame, text="Register", command=register_user, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
+#     )
+
+#     title_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
+
+#     username_label.grid(row=1, column=0, padx=20, pady=20)
+#     username_entry.grid(row=1, column=1, padx=20, pady=20)
+
+#     password_label.grid(row=2, column=0, padx=20, pady=20)
+#     password_entry.grid(row=2, column=1, padx=20, pady=20)
+
+#     login_button.grid(row=3, column=0, padx=10, pady=30, sticky="ew")
+#     register_button.grid(row=3, column=1, padx=10, pady=30)
+
+#     frame.pack(padx=30, pady=30)
+
+#     window.mainloop()
+
 import re
 import sqlite3
 import tkinter as tk
@@ -41,113 +195,125 @@ def check_password(password):
     return True, "Password is valid"
 
 
-def validate_login():
+class LoginWindow:
 
-    username = username_entry.get()
-    password = password_entry.get()
+    def __init__(self):
 
-    if not username or not password:
-        messagebox.showerror("Error", "Please enter both username and password")
-        return
+        self.window = tk.Tk()
+        self.window.title("Login form")
+        self.window.geometry('340x440')
+        self.window.configure(bg='#333333')
+        self.login_successful = False
+        self.username = None
 
-    try:
-        with sqlite3.connect(db_path) as conn:
+        frame = tk.Frame(bg='#333333')
 
-            c = conn.cursor()
-            c.execute("SELECT password_hash FROM Users WHERE username = ?", (username,))
-            result = c.fetchone()
+        title_label = tk.Label(
+            frame, text="Login", bg='#333333', fg="#1373CC", font=("Arial", 30)
+        )
 
-            if result:
-                stored_hash = result[0]
-                if verify_password(password, stored_hash):
-                    messagebox.showinfo("Login Succesful")
-                else:
-                    messagebox.showerror("Error", "Invalid Password")
+        username_label = tk.Label(
+            frame, text="Username", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
+        )
 
-            else:
-                messagebox.showerror("Error", "User not found")
+        self.username_entry = tk.Entry(frame, font=("Arial", 16))
 
+        password_label = tk.Label(
+            frame, text="Password", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
+        )
 
-    except sqlite3.Error as e:
-        messagebox.showerror("Database Error", f"An error occurred: {e}")
+        self.password_entry = tk.Entry(frame, show="*", font=("Arial", 16))
 
-def register_user():
+        login_button = tk.Button(
+            frame, text="Login", command=self.validate_login, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
+        )
 
-    username = username_entry.get()
-    password = password_entry.get()
+        register_button = tk.Button(
+            frame, text="Register", command=self.register_user, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
+        )
 
-    if not username or not password:
-        messagebox.showerror("Error", "Please enter both username and password")
-        return
-    
-    is_valid, error_msg = check_password(password)
+        title_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
 
-    if not is_valid:
-        error_text = "Password must have:\n" + "\n".join(f"• {error}" for error in error_msg) #Used AI for this
-        messagebox.showerror("Invalid password", error_msg)
-        return
+        username_label.grid(row=1, column=0, padx=20, pady=20)
+        self.username_entry.grid(row=1, column=1, padx=20, pady=20)
 
-    hashed_password = sha256(password).hex()
+        password_label.grid(row=2, column=0, padx=20, pady=20)
+        self.password_entry.grid(row=2, column=1, padx=20, pady=20)
 
-    try:
-        with sqlite3.connect(db_path) as conn:
-            c = conn.cursor()
-            c.execute("INSERT INTO Users (username, password_hash) VALUES (?, ?)", 
-                    (username, hashed_password))
+        login_button.grid(row=3, column=0, padx=10, pady=30, sticky="ew")
+        register_button.grid(row=3, column=1, padx=10, pady=30)
+
+        frame.pack(padx=30, pady=30)
+
+    def validate_login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        if not username or not password:
+            messagebox.showerror("Error", "Please enter both username and password")
+            return
+
+        try:
             
-            conn.commit()
-            messagebox.showinfo("Success", "User registered successfully!")
+            with sqlite3.connect(db_path) as conn:
+                c = conn.cursor()
+                c.execute("SELECT password_hash FROM Users WHERE username = ?", 
+                          (username,))
+                result = c.fetchone()
 
-    except sqlite3.IntegrityError:
-        messagebox.showerror("Error", "Username already exists.")
-    except sqlite3.Error as e:
-        messagebox.showerror("Database Error", f"An error occurred: {e}")
+                if result:
 
+                    stored_hash = result[0]
 
-if __name__ == "__main__":
-    
-    window = tk.Tk()
-    window.title("Login form")
-    window.geometry('340x440')
-    window.configure(bg='#333333')
+                    if verify_password(password, stored_hash):
+                        messagebox.showinfo("Login Successful", f"Welcome {username}!")
+                        self.login_successful = True
+                        self.username = username
+                        self.window.destroy()
 
-    frame = tk.Frame(bg='#333333')
+                    else:
+                        messagebox.showerror("Error", "Invalid Password")
 
-    title_label = tk.Label(
-        frame, text="Login", bg='#333333', fg="#1373CC", font=("Arial", 30)
-    )
+                else:
+                    messagebox.showerror("Error", "User not found")
 
-    username_label = tk.Label(
-        frame, text="Username", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
-    )
+        except sqlite3.Error as e:
+            messagebox.showerror("Database Error", f"An error occurred: {e}")
 
-    username_entry = tk.Entry(frame, font=("Arial", 16))
+    def register_user(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
 
-    password_label = tk.Label(
-        frame, text="Password", bg='#333333', fg="#FFFFFF", font=("Arial", 16)
-    )
+        if not username or not password:
+            messagebox.showerror("Error", "Please enter both username and password")
+            return
+        
+        is_valid, error_msg = check_password(password)
 
-    password_entry = tk.Entry(frame, show="*", font=("Arial", 16))
+        if not is_valid:
+            error_text = "Password must have:\n" + "\n".join(f"• {error}" for error in error_msg)
+            messagebox.showerror("Invalid password", error_text)
+            return
 
-    login_button = tk.Button(
-        frame, text="Login", command=validate_login, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
-    )
+        hashed_password = sha256(password).hex()
 
-    register_button = tk.Button(
-        frame, text="Register", command=register_user, bg="#1373CC", fg="#FFFFFF", font=("Arial", 16), width=15
-    )
+        try:
+            
+            with sqlite3.connect(db_path) as conn:
 
-    title_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=40)
+                c = conn.cursor()
+                c.execute("INSERT INTO Users (username, password_hash) VALUES (?, ?)", 
+                        (username, hashed_password))
+                
+                conn.commit()
+                messagebox.showinfo("Success", "User registered successfully!")
 
-    username_label.grid(row=1, column=0, padx=20, pady=20)
-    username_entry.grid(row=1, column=1, padx=20, pady=20)
+        except sqlite3.IntegrityError:
+            messagebox.showerror("Error", "Username already exists.")
 
-    password_label.grid(row=2, column=0, padx=20, pady=20)
-    password_entry.grid(row=2, column=1, padx=20, pady=20)
+        except sqlite3.Error as e:
+            messagebox.showerror("Database Error", f"An error occurred: {e}")
 
-    login_button.grid(row=3, column=0, padx=10, pady=30, sticky="ew")
-    register_button.grid(row=3, column=1, padx=10, pady=30)
-
-    frame.pack(padx=30, pady=30)
-
-    window.mainloop()
+    def run(self):
+        self.window.mainloop()
+        return self.login_successful, self.username

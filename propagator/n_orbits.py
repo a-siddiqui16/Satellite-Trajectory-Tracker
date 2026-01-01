@@ -82,6 +82,8 @@ def coes2rv(coes, deg=False, mu=planetary_data.earth['mu']):
 
     return r, v
 
+
+#ECI to perifocal rotation matrix
 def eci2perif(raan, aop, i):
     row0 = [-m.sin(raan)*m.cos(i)*m.sin(aop) + m.cos(raan)*m.cos(aop), m.cos(raan)*m.cos(i)*m.sin(aop) + m.sin(raan)*m.cos(aop), m.sin(i)*m.sin(aop)]
     row1 = [-m.sin(raan)*m.cos(i)*m.cos(aop) - m.cos(raan)*m.sin(aop),m.cos(raan)*m.cos(i)*m.cos(aop) - m.sin(raan)*m.sin(aop), m.sin(i)*m.cos(aop)]
@@ -119,9 +121,3 @@ def ecc_anomaly(arr, method, tol=1e-8):
     
     else:
         print("Invalid method")
-
-
-        
-
-
-    
