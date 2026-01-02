@@ -8,9 +8,10 @@ from skyfield_calculations import tle_fetcher
 from skyfield_calculations import orbital_calculations
 from propagator.orbit_propagator import OrbitPropagator
 from propagator import planetary_data
+
+
 plt.style.use('dark_background')
-
-
+db_path = "satellite_database.db"
 
 class MainSystemGUI:
 
@@ -85,6 +86,7 @@ class MainSystemGUI:
 
         try:
             norad_id = int(norad_id_str)
+
 
         except ValueError:
             messagebox.showerror("Error", "Invalid NORAD ID")
@@ -169,3 +171,32 @@ class MainSystemGUI:
 
     def run(self):
         self.window.mainloop()
+
+
+#     try:
+#         with sqlite3.connect(db_path) as conn:
+
+#             c = conn.cursor()
+
+#             c.execute("""INSERT OR IGNORE INTO Satellites
+#                     (norad_id, satellite_name, satellite_type)
+#                     VALUES (?, ?, ?)""",
+#                     (norad_id, satellite_name, None))
+            
+#             c.execute("""INSERT INTO TLE_Data 
+#                         (norad_id, tle_line1, tle_line2, orbit_type, 
+#                         inclination, eccentricity, mean_motion, epoch_date)
+#                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+#                     (norad_id, tle_line1, tle_line2, orbit_type,
+#                     inclination, eccentricity, mean_motion, epoch_date))
+            
+#             conn.commit()
+
+#         return True
+    
+#     except sqlite3.Error as e:
+#         print("Error")
+#         return False
+
+
+#Need to add a feature which adds the satellite parameters to my database since I changed visualisation
