@@ -60,15 +60,6 @@
 #     n_orbits.plot_n_orbits([op0.rs, op1.rs], labels=['ISS', 'GEO'], show_plot=True)
     
 
-import sys
-import os
-
-#Add current directory and subdirectories to path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
-sys.path.insert(0, os.path.join(current_dir, 'auth'))
-sys.path.insert(0, os.path.join(current_dir, 'gui'))
-
 from auth.login_gui import LoginWindow
 from gui.main_system import MainSystemGUI
 

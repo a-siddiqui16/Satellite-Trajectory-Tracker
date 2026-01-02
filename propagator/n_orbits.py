@@ -71,7 +71,7 @@ def coes2rv(coes, deg=False, mu=planetary_data.earth['mu']):
 
     #calculating r and v vectors in perifocal frame
     r_perif = r_norm * np.array([m.cos(ta), m.sin(ta), 0])
-    v_perif = m.sqrt(mu * a)/r_norm * np.array([-m.sin(E), m.cos(E) * m.sqrt(1-e**22), 0])
+    v_perif = m.sqrt(mu * a)/r_norm * np.array([-m.sin(E), m.cos(E) * m.sqrt(1-e**2), 0])
     
     #rotation matrix
     perif2eci = np.transpose(eci2perif(raan, aop, i))

@@ -246,6 +246,7 @@ class LoginWindow:
         frame.pack(padx=30, pady=30)
 
     def validate_login(self):
+
         username = self.username_entry.get()
         password = self.password_entry.get()
 
@@ -281,6 +282,7 @@ class LoginWindow:
             messagebox.showerror("Database Error", f"An error occurred: {e}")
 
     def register_user(self):
+        
         username = self.username_entry.get()
         password = self.password_entry.get()
 

@@ -69,14 +69,9 @@
 from skyfield.api import EarthSatellite, load
 from propagator import planetary_data
 import math
-import os
-import sys
-import tle_fetcher
+from skyfield_calculations import tle_fetcher
 
 cb = planetary_data.earth
-
-#Add skyfield directory to path for local imports
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 #Constants
 earth_radius_km = cb["radius"]
