@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from propagator import planetary_data
 import math as m
 
-d2r = np.pi/100.0
+d2r = np.pi/180.0
 
 
 def plot_n_orbits(rs, labels, cb=planetary_data.earth, show_plot=False, save_plot=False, title="Many Orbits"):
