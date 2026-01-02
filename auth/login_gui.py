@@ -157,7 +157,7 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 from string import punctuation
-from password_hash import sha256, verify_password
+from auth.password_hash import sha256, verify_password
 
 
 db_path = "satellite_database.db"
