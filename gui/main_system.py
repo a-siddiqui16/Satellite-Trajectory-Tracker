@@ -62,10 +62,15 @@ class MainSystemGUI:
         self.norad_entry.grid(row=0, column=1, padx=10, pady=10)
 
         track_button = tk.Button(
-            input_frame,text="Track Satellite",command=self.track_satellite,bg="#1373CC",fg="#FFFFFF",font=("Arial", 14),width=15,height=5
+            input_frame, text="Track Satellite",command=self.track_satellite,bg="#1373CC",fg="#FFFFFF",font=("Arial", 14),width=15,height=2
+            )
+        
+        exit_button = tk.Button(
+            input_frame, text="Exit Program",command=self.exit_program, bg="#1373CC",fg="#FFFFFF",font=("Arial", 14),width=15,height=2
             )
         
         track_button.grid(row=0, column=2, padx=10, pady=10)
+        exit_button.grid(row=0, column=3, padx=10, pady=10)
 
         #Added example NORAD ID's for user to experiment with
         info_frame = tk.Frame(self.window, bg='#333333')
@@ -86,6 +91,32 @@ class MainSystemGUI:
 
         try:
             norad_id = int(norad_id_str)
+
+            # try:
+            #     with sqlite3.connect(db_path) as conn:
+
+            #         c = conn.cursor()
+
+            #         c.execute("""INSERT OR IGNORE INTO Satellites
+            #                 (norad_id, satellite_name, satellite_type)
+            #                 VALUES (?, ?, ?)""",
+            #                 (norad_id, satellite_name, None))
+                    
+            #         c.execute("""INSERT INTO TLE_Data 
+            #                     (norad_id, tle_line1, tle_line2, orbit_type, 
+            #                     inclination, eccentricity, mean_motion, epoch_date)
+            #                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            #                 (norad_id, tle_line1, tle_line2, orbit_type,
+            #                 inclination, eccentricity, mean_motion, epoch_date))
+                    
+            #         conn.commit()
+
+            #     return True
+            
+            # except sqlite3.Error as e:
+            #     print("Error")
+            #     return False
+
 
 
         except ValueError:
@@ -116,6 +147,7 @@ class MainSystemGUI:
 
         #Visualize orbit
         self.visualize_orbit(satellite_name, altitude, inclination)
+
 
     def visualize_orbit(self, satellite_name, altitude, inclination):
         cb = planetary_data.earth
@@ -168,6 +200,9 @@ class MainSystemGUI:
         canvas = FigureCanvasTkAgg(fig, master=visualisaton_window)
         canvas.draw()
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+    def exit_program(self):
+        self.exit()
 
     def run(self):
         self.window.mainloop()
