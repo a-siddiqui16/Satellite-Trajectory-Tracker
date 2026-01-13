@@ -1,4 +1,5 @@
 import tkinter as tk
+import sqlite3
 from tkinter import messagebox
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -92,36 +93,11 @@ class MainSystemGUI:
         try:
             norad_id = int(norad_id_str)
 
-            # try:
-            #     with sqlite3.connect(db_path) as conn:
-
-            #         c = conn.cursor()
-
-            #         c.execute("""INSERT OR IGNORE INTO Satellites
-            #                 (norad_id, satellite_name, satellite_type)
-            #                 VALUES (?, ?, ?)""",
-            #                 (norad_id, satellite_name, None))
-                    
-            #         c.execute("""INSERT INTO TLE_Data 
-            #                     (norad_id, tle_line1, tle_line2, orbit_type, 
-            #                     inclination, eccentricity, mean_motion, epoch_date)
-            #                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-            #                 (norad_id, tle_line1, tle_line2, orbit_type,
-            #                 inclination, eccentricity, mean_motion, epoch_date))
-                    
-            #         conn.commit()
-
-            #     return True
-            
-            # except sqlite3.Error as e:
-            #     print("Error")
-            #     return False
-
-
 
         except ValueError:
             messagebox.showerror("Error", "Invalid NORAD ID")
             return
+        
 
         #Fetch TLE data
         satellite_data = tle_fetcher.fetch_satellite_tle(norad_id)
@@ -135,6 +111,34 @@ class MainSystemGUI:
         #Create satellite object
         satellite = EarthSatellite(tle_line1, tle_line2, satellite_name, self.ts)
         orbit_type, altitude, inclination = orbital_calculations.classify_orbit(satellite)
+
+        eccentricity = satellite.model.ecco
+        mean_motion = satellite.model.no_kozai * 24 * 60 / (2 * np.pi)
+        epoch_date = satellite.epoch.utc_iso()
+
+        #Save the information to my database
+
+        try:
+            with sqlite3.connect(db_path) as conn:
+                c = conn.cursor()
+
+                c.execute("""INSERT OR IGNORE INTO Satellites
+                          (norad_id, satellite_name, satellite_type)
+                          VALUES (?, ?, ?)""",
+                          (norad_id, satellite_name, None))
+                
+
+                c.execute("""INSERT INTO TLE_Data
+                          (norad_id, tle_line1, tle_line2, orbit_type, inclination, eccentricity, mean_motion, epoch_date)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                          (norad_id, tle_line1, tle_line2, orbit_type, inclination, eccentricity, mean_motion, epoch_date))
+
+                conn.commit()
+        
+        except sqlite3.Error as e:
+            print(f"Database error: {e}")
+                                
+                        
 
         #Orbit parameters for satellite
         info_message = f"Satellite: {satellite_name}\n"
@@ -202,7 +206,7 @@ class MainSystemGUI:
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
     def exit_program(self):
-        self.exit()
+        self.window.destroy()
 
     def run(self):
         self.window.mainloop()
