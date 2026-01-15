@@ -15,8 +15,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS Users (
 
 c.execute("""CREATE TABLE IF NOT EXISTS Satellites (
         norad_id INTEGER PRIMARY KEY,
-        satellite_name TEXT NOT NULL,
-        satellite_type TEXT
+        satellite_name TEXT NOT NULL
     )""")
 
 

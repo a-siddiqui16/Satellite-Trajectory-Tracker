@@ -78,7 +78,7 @@ class MainSystemGUI:
         info_frame.pack(pady=20, fill=tk.BOTH, expand=True)
 
         info_label = tk.Label(
-            info_frame,text="Common NORAD IDs:\n\nISS: 25544\nHubble: 20580\nGPS BIIA-10: 22877",bg='#333333',fg="#AAAAAA",font=("Arial", 12),justify=tk.LEFT
+            info_frame,text=self.get_user_favourites,bg='#333333',fg="#CommonAAAAAA",font=("Arial", 12),justify=tk.LEFT
             )
         info_label.pack(pady=20)
 
@@ -117,15 +117,14 @@ class MainSystemGUI:
         epoch_date = satellite.epoch.utc_iso()
 
         #Save the information to my database
-
         try:
             with sqlite3.connect(db_path) as conn:
                 c = conn.cursor()
 
                 c.execute("""INSERT OR IGNORE INTO Satellites
-                          (norad_id, satellite_name, satellite_type)
-                          VALUES (?, ?, ?)""",
-                          (norad_id, satellite_name, None))
+                          (norad_id, satellite_name)
+                          VALUES (?, ?)""",
+                          (norad_id, satellite_name))
                 
 
                 c.execute("""INSERT INTO TLE_Data
@@ -137,8 +136,8 @@ class MainSystemGUI:
         
         except sqlite3.Error as e:
             print(f"Database error: {e}")
-                                
-                        
+
+                   
 
         #Orbit parameters for satellite
         info_message = f"Satellite: {satellite_name}\n"
@@ -205,37 +204,52 @@ class MainSystemGUI:
         canvas.draw()
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
+    #The system presumes that when a user enters a satellite, it automatically goes into their favourites
+    def add_to_user_favourites(self, norad_id):
+        try:
+            with sqlite3.connect(db_path) as conn:
+                c = conn.cursor()
+
+            c.execute("SELECT user_id from Users WHERE username = ?", (self.username))
+            result = c.fetchone()
+
+            if result:
+                user_id = result[0]
+                c.execute("""INSERT OR IGNORE INTO User_Favourites
+                          (user_id, norad_id) VALUES (?, ?)""",
+                          (user_id, norad_id))
+                
+                conn.commit()
+                messagebox.show("Satellite added to user favourites")
+            else:
+                messagebox.showerror("User not found")
+
+        except sqlite3.Error as e:
+            messagebox.showerror("Could not add to favourites")
+
+    #This function joins the satellites table with the user favourites tables 
+
+    def get_user_favourites(self):
+        try:
+            with sqlite3.connect(db_path) as conn:
+                c = conn.cursor()
+
+                c.execute("""SELECT Satellites.norad_id, Satellites.satellite_name
+                          FROM User_Favourites
+                          JOIN Satellites ON User_Favourites.norad_id = Satellites.norad_id
+                          JOIN Users ON User_Favourites.user_id = Useres.user_id
+                          WHERE Users.username = ?""", (self.username))
+                
+            return c.fetchall()
+        
+        except sqlite3.Error as e:
+            print("Error fetching favourites")
+            return [0]
+        
+
     def exit_program(self):
         self.window.destroy()
 
     def run(self):
         self.window.mainloop()
 
-
-#     try:
-#         with sqlite3.connect(db_path) as conn:
-
-#             c = conn.cursor()
-
-#             c.execute("""INSERT OR IGNORE INTO Satellites
-#                     (norad_id, satellite_name, satellite_type)
-#                     VALUES (?, ?, ?)""",
-#                     (norad_id, satellite_name, None))
-            
-#             c.execute("""INSERT INTO TLE_Data 
-#                         (norad_id, tle_line1, tle_line2, orbit_type, 
-#                         inclination, eccentricity, mean_motion, epoch_date)
-#                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-#                     (norad_id, tle_line1, tle_line2, orbit_type,
-#                     inclination, eccentricity, mean_motion, epoch_date))
-            
-#             conn.commit()
-
-#         return True
-    
-#     except sqlite3.Error as e:
-#         print("Error")
-#         return False
-
-
-#Need to add a feature which adds the satellite parameters to my database since I changed visualisation
