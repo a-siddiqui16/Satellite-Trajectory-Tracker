@@ -78,7 +78,7 @@ class MainSystemGUI:
         info_frame.pack(pady=20, fill=tk.BOTH, expand=True)
 
         info_label = tk.Label(
-            info_frame,text=self.get_user_favourites,bg='#333333',fg="#CommonAAAAAA",font=("Arial", 12),justify=tk.LEFT
+            info_frame,text=self.get_user_favourites,bg='#333333',fg="#FFFFFF",font=("Arial", 12),justify=tk.LEFT
             )
         info_label.pack(pady=20)
 
@@ -227,7 +227,7 @@ class MainSystemGUI:
         except sqlite3.Error as e:
             messagebox.showerror("Could not add to favourites")
 
-    #This function joins the satellites table with the user favourites tables 
+    #This function joins the satellites table with the user favourites tables
 
     def get_user_favourites(self):
         try:
