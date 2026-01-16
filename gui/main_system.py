@@ -78,7 +78,7 @@ class MainSystemGUI:
         info_frame.pack(pady=20, fill=tk.BOTH, expand=True)
 
         info_label = tk.Label(
-            info_frame,text=self.get_user_favourites,bg='#333333',fg="#FFFFFF",font=("Arial", 12),justify=tk.LEFT
+            info_frame,text=self.format_favourites_display(),bg='#333333',fg="#FFFFFF",font=("Arial", 12),justify=tk.LEFT
             )
         info_label.pack(pady=20)
 
@@ -210,19 +210,19 @@ class MainSystemGUI:
             with sqlite3.connect(db_path) as conn:
                 c = conn.cursor()
 
-            c.execute("SELECT user_id from Users WHERE username = ?", (self.username))
-            result = c.fetchone()
+                c.execute("SELECT user_id from Users WHERE username = ?", (self.username,))
+                result = c.fetchone()
 
-            if result:
-                user_id = result[0]
-                c.execute("""INSERT OR IGNORE INTO User_Favourites
-                          (user_id, norad_id) VALUES (?, ?)""",
-                          (user_id, norad_id))
-                
-                conn.commit()
-                messagebox.show("Satellite added to user favourites")
-            else:
-                messagebox.showerror("User not found")
+                if result:
+                    user_id = result[0]
+                    c.execute("""INSERT OR IGNORE INTO User_Favourites
+                            (user_id, norad_id) VALUES (?, ?)""",
+                            (user_id, norad_id))
+                    
+                    conn.commit()
+                    messagebox.show("Satellite added to user favourites")
+                else:
+                    messagebox.showerror("User not found")
 
         except sqlite3.Error as e:
             messagebox.showerror("Could not add to favourites")
@@ -237,19 +237,29 @@ class MainSystemGUI:
                 c.execute("""SELECT Satellites.norad_id, Satellites.satellite_name
                           FROM User_Favourites
                           JOIN Satellites ON User_Favourites.norad_id = Satellites.norad_id
-                          JOIN Users ON User_Favourites.user_id = Useres.user_id
-                          WHERE Users.username = ?""", (self.username))
+                          JOIN Users ON User_Favourites.user_id = Users.user_id
+                          WHERE Users.username = ?""", (self.username,))
                 
-            return c.fetchall()
+                return c.fetchall()
         
         except sqlite3.Error as e:
             print("Error fetching favourites")
             return [0]
         
+    def format_favourites_display(self):
+        favourites = self.get_user_favourites()
+        
+        if not favourites:
+            return "Common NORAD IDs:\n\nISS: 25544\nHubble: 20580\nGPS BIIA-10: 22877"
+        
+        text = "Your Favourite Satellites:\n\n"
+        for norad_id, sat_name in favourites:
+            text += f"{sat_name}: {norad_id}\n"
+        
+        return text
 
     def exit_program(self):
         self.window.destroy()
 
     def run(self):
         self.window.mainloop()
-
