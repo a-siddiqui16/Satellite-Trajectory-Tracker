@@ -137,6 +137,8 @@ class MainSystemGUI:
         except sqlite3.Error as e:
             print(f"Database error: {e}")
 
+
+        self.add_to_user_favourites(norad_id)
                    
 
         #Orbit parameters for satellite
@@ -220,7 +222,7 @@ class MainSystemGUI:
                             (user_id, norad_id))
                     
                     conn.commit()
-                    messagebox.show("Satellite added to user favourites")
+                    messagebox.showinfo("Success", "Satellite added to user favourites")
                 else:
                     messagebox.showerror("User not found")
 
@@ -260,6 +262,7 @@ class MainSystemGUI:
 
     def exit_program(self):
         self.window.destroy()
+        print("Program closed successfully")
 
     def run(self):
         self.window.mainloop()
