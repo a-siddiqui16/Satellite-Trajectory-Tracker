@@ -57,10 +57,11 @@ def sha256(message):
         schedule_array = []
 
         #First 16 words
-
         for t in range(16):
             schedule_array.append(int.from_bytes(block[t * 4:(t+1) * 4], "big"))
 
+
+        #Remaining 48 words
         for t in range(16, 64):
             s0 = _sigma0(schedule_array[t-15])
             s1 = _sigma1(schedule_array[t-2])

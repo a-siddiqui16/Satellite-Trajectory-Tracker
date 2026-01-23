@@ -71,7 +71,7 @@ class OrbitPropagator:
         ay = -self.cb['mu'] * ry / norm_r**3
         az = -self.cb['mu'] * rz / norm_r**3
 
-        return [vx, vy, vz, ax, ay, az] #derivative of precision is your velocrit
+        return [vx, vy, vz, ax, ay, az] #derivative of position is velocity
 
         #r is pointing from the centre of the earth to your
         # satellite and the acceleration due to gravity is going in the opposite direction so r is negative
