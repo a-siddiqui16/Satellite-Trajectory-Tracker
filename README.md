@@ -12,12 +12,3 @@
 
 
 
-TO DO:
-
-- Add earth textures to matplotlib interface
-- Add a user favourites section
-- Add satellite parameters to the relevant table (since I made a new propagator)
-- Add lat, long to satellite info
-- Polish up GUI
-  
-
