@@ -18,7 +18,10 @@ class MainSystemGUI:
 
     def __init__(self, username):
 
+        #Store logged in username
         self.username = username
+
+        #Main application window
         self.window = tk.Tk()
         self.window.title("Satellite Trajectory Tracker")
         self.window.geometry('1920x1080')
@@ -55,17 +58,21 @@ class MainSystemGUI:
             )
         norad_label.grid(row=0, column=0, padx=10, pady=10)
 
+
+        #NORAD ID entry box
         self.norad_entry = tk.Entry(
             input_frame, font=("Arial", 14), width=20
             )
         
-
         self.norad_entry.grid(row=0, column=1, padx=10, pady=10)
 
+
+        #"Track Satellite" button that activates the track_satellite function
         track_button = tk.Button(
             input_frame, text="Track Satellite",command=self.track_satellite,bg="#1373CC",fg="#FFFFFF",font=("Arial", 14),width=15,height=2
             )
         
+        #Button to exit program
         exit_button = tk.Button(
             input_frame, text="Exit Program",command=self.exit_program, bg="#1373CC",fg="#FFFFFF",font=("Arial", 14),width=15,height=2
             )
@@ -77,6 +84,8 @@ class MainSystemGUI:
         info_frame = tk.Frame(self.window, bg='#333333')
         info_frame.pack(pady=20, fill=tk.BOTH, expand=True)
 
+
+        #Display user favourites or example NORAD IDs
         info_label = tk.Label(
             info_frame,text=self.format_favourites_display(),bg='#333333',fg="#FFFFFF",font=("Arial", 12),justify=tk.LEFT
             )
@@ -84,8 +93,10 @@ class MainSystemGUI:
 
     def track_satellite(self):
 
+        #Get NORAD ID entered by the user
         norad_id_str = self.norad_entry.get().strip()
 
+        #Checks whether the NORAD ID entry is filled
         if not norad_id_str:
             messagebox.showerror("Error", "Invalid NORAD ID")
             return
@@ -160,7 +171,9 @@ class MainSystemGUI:
         #Classical orbital elements (COES): [a, e, i, ta, aop, raan]
         coes = [cb["radius"] + altitude, 0.0001, inclination, 0.0, 0.0, 0.0]
 
-        tspan = 100 * 60.0  #100 minutes
+        a = cb["radius"] + altitude
+        period = 2 * np.pi * np.sqrt(a**3 / cb["mu"]) / 60  # orbital period in minutes
+        tspan = max(period * 1.2, 100) * 60.0  # at least 1.2 full orbits, in seconds
         dt = 10.0 #Found that a smaller timespan = higher accuracy
 
         op = OrbitPropagator(coes, tspan, dt, coes=True)
@@ -189,7 +202,7 @@ class MainSystemGUI:
         ax.plot_wireframe(x, y, z, color="k", linewidth=0.3, alpha=0.3)
 
         #Set labels and limits
-        max_val = np.max(np.abs(op.rs))
+        max_val = np.max(np.abs(op.rs)) * 1.1
         ax.set_xlim([-max_val, max_val])
         ax.set_ylim([-max_val, max_val])
         ax.set_zlim([-max_val, max_val])
@@ -249,8 +262,11 @@ class MainSystemGUI:
             return [0]
         
     def format_favourites_display(self):
+
+        #Retrieve the user's saved favourite satellites
         favourites = self.get_user_favourites()
         
+        #Display NORAD ID prompts if the user has no favourite (most likely a new account)
         if not favourites:
             return "Common NORAD IDs:\n\nISS: 25544\nHubble: 20580\nGPS BIIA-10: 22877"
         
@@ -260,9 +276,11 @@ class MainSystemGUI:
         
         return text
 
+    #Closes main application window
     def exit_program(self):
         self.window.destroy()
         print("Program closed successfully")
 
+    #Starts Tkinter event loop to keep the window acitve
     def run(self):
         self.window.mainloop()
