@@ -2,25 +2,27 @@ import sqlite3
 
 try:
 
+    #Connect to the SQLite database (creates a file if it does not exist)
     conn = sqlite3.connect("satellite_database.db")
 
+    #Enable foreign key support to allow relationships between tables
     c = conn.cursor()
     c.execute("PRAGMA foreign_keys = ON")
 
-
+    #Create User Table to store credentials
     c.execute("""CREATE TABLE IF NOT EXISTS Users (
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,             
             username TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL
         )""")
 
-
+    #Create Satellite Table to store basic information
     c.execute("""CREATE TABLE IF NOT EXISTS Satellites (
             norad_id INTEGER PRIMARY KEY,
             satellite_name TEXT NOT NULL
         )""")
 
-
+    #Create TLE Data table to store orbtital parameters
     c.execute("""CREATE TABLE IF NOT EXISTS TLE_Data (
             tle_id INTEGER PRIMARY KEY AUTOINCREMENT,
             norad_id INTEGER NOT NULL,
@@ -35,7 +37,7 @@ try:
             FOREIGN KEY (norad_id) REFERENCES Satellites(norad_id)
         )""")
 
-
+    #Create a user favourites table to manage user favourites
     c.execute("""CREATE TABLE IF NOT EXISTS User_Favourites (
             favourite_id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -48,9 +50,11 @@ try:
 
     conn.commit()
 
+#Prints out an error if a database operation fails
 except sqlite3.Error as e:
     print(f"Data base error {e}")
 
+#Closes the database connection
 finally:
     if conn:
         conn.close()

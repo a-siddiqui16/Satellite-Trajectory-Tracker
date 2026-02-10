@@ -8,17 +8,23 @@ def fetch_satellite_tle(norad_id):
 
 
     try: 
+
+        #Sends a request to CelesTrak with a timeout of 10 seconds
         response = requests.get(url, timeout=10)
 
+        #Check if the reqeust was sucessful
         if response.status_code == 200:
             data = response.text.strip()
 
+            #If no data is returned, TLE Data does not exist for this ID and an appropriate message is returned
             if not data:
                 print("TLE Data not found")
                 return None
 
+            #Split TLE into lines (name, line1, line2)
             lines = data.split('\n')
 
+            #Checks whether the TLE Data contains at least 3 lines
             if len(lines) < 3:
                 print("Invalid TLE data format")
                 return None
@@ -27,19 +33,22 @@ def fetch_satellite_tle(norad_id):
             tle_line1 = lines[1].strip()
             tle_line2 = lines[2].strip()
 
+            #Returns parsed TLE Data
             return norad_id, satellite_name, tle_line1, tle_line2
-    
+
+        #Cathes an invalid request and returns the status code
         else:
             print(response.status_code)
             return None
         
+    #Handles network issues such as timeout or no internet
     except requests.exceptions.RequestException as e:
         print(f"Network error: {e}")
         return None
     
 
 
-
+#Example TLE:
 #Line 1: 1 25544U 98067A   22001.74462497  .00001435  00000-0  34779-4 0  9992
 #Line 2: 2 25544  51.6464  24.2704 0004064  69.5467 290.6355 15.48835264296862
 

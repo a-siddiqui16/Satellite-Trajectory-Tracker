@@ -50,6 +50,7 @@ def get_satellite_info(norad_id):
     
     satellite_data = tle_fetcher.fetch_satellite_tle(norad_id) 
 
+    #If the returned value is empty, display a relevent error message
     if not satellite_data:
         print("Failed to retrieve satellite data")
         return None
